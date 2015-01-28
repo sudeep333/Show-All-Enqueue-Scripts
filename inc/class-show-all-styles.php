@@ -33,10 +33,16 @@ Class Ravs_Show_All_Styles extends Debug_Bar_Panel{
 							$enqueued = '&#10003;';
 						}
 
+						/**
+						 * get style file link
+						 * @var string
+						 */
+						$style_file_link = false !== strpos(  $registered->src, '//' ) ? self::get_valid_url( $registered->src ) : get_site_url( null, $registered->src );
+
 						echo '<tr'.$statusClass.'>';
 							echo '<td>'.$enqueued.'</td>';
 							echo '<td>'.$registered->handle.'</td>';
-							echo '<td>'.$registered->src.'</td>';
+							echo '<td><a href="'.$style_file_link.'" target="_blank">'.$registered->src.'</a></td>';
 							echo '<td>'.$registered->ver.'</td>';
 							echo '<td>'.implode( ', ', $registered->deps).'</td>';
 							// echo '<td>'.$registered->extra['data'].'</td>';
@@ -46,6 +52,20 @@ Class Ravs_Show_All_Styles extends Debug_Bar_Panel{
 			</table>
 		</div>
 		<?php
+	}
+
+	function get_valid_url( $url ){
+
+		if( false !== strpos( $url, 'http' ) ){
+			return $url;
+		}elseif( false !== strpos( $url, 'googleapis' ) ){
+			return 'http:'.$url;
+		}
+
+		// put your login here
+		$url = apply_filters( 'debug_bar_valid_url_check', $url );
+
+		return $url;
 	}
 
 	function enqueue(){
